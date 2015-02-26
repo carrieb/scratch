@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+  <ul class=ficlist>
+  {% for fic in fics %}
+    <li><h2><a href="{{ fic.url }}">{{ fic.title }}</a> by {{ fic.author }}</h2>{{ fic.summary|safe }}<p>{{ fic.publish }} - {{ fic.updated }}</p></li>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em></li>
+  {% endfor %}
+  </ul>
+{% endblock %}
