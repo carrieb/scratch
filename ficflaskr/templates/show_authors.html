@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% macro fic_link(title, url) -%}
+<a href="{{ url }}">{{ title }}</a>
+{%- endmacro %}
+{% block body %}
+  <ul class=ficlist>
+  <p class="text-center">{% if authors.has_prev %}<a href="{{ url_for('show_authors', page=authors.prev_num) }}">&lt;&lt; {{ authors.prev_num }}</a>{% else %}{% endif %} | {% if authors.has_next %}<a href="{{ url_for('show_authors', page=authors.next_num) }}">{{ authors.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+  {% for author in authors.items %}
+    <li><h3><a href="{{ author.url }}">{{ author.name }}</a></h3>{{ author.fics|map('create_link')|join(' - ')|safe }}</li>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em></li>
+  {% endfor %}
+  </ul>
+  <p class="text-center">{% if authors.has_prev %}<a href="{{ url_for('show_authors', page=authors.prev_num) }}">&lt;&lt; {{ authors.prev_num }}</a>{% else %}{% endif %} | {% if authors.has_next %}<a href="{{ url_for('show_authors', page=authors.next_num) }}">{{ authors.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+{% endblock %}
