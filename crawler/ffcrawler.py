@@ -9,7 +9,7 @@ from string import Template
 
 ARTOO_PATH = 'scripts/artoo.js'
 EXTRACTION_SCRIPT_FILENAME = 'scripts/extract.js'
-DEFAULT_LIMIT = 1
+DEFAULT_LIMIT = 21650
 DEFAULT_CHROMEDRIVER_PATH = "/Users/carolyn/projects/scratch/crawler/chromedriver"
 DEFAULT_OUTPUT_DIR = "/Users/carolyn/projects/scratch/crawler/data"
 PAGE_URL = "https://www.fanfiction.net/book/Harry-Potter/?&srt=1&lan=1&r=10&p=%(page)d"
@@ -27,7 +27,7 @@ def main(argv):
 
 def crawl(driver, page_url, limit, artoo_path, extract_path, output_path):
     start_time = time.time()
-    i = 0
+    i = 4454
     while i < limit:
         page = page_url % {"page" : i}
         print "Fetching " + page

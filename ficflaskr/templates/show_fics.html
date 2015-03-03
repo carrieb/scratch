@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
   <ul class=ficlist>
-  {% for fic in fics %}
-    <li><h3><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author }}</small></h3>{{ fic.summary|safe }}<p>{{ fic.publish }} - {{ fic.updated }}</p></li>
+  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+  {% for fic in fics.items %}
+    <li><h3><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small></h3>{{ fic.summary|safe }}<p>{{ fic.pub_date }} - {{ fic.upd_date }}</p></li>
   {% else %}
     <li><em>Unbelievable.  No entries here so far</em></li>
   {% endfor %}
   </ul>
+  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
 {% endblock %}
