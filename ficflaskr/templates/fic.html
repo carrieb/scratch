@@ -1,0 +1,29 @@
+<script type=text/javascript>
+	$(function() {
+	    $('a#favorite_{{ fic.id }}').bind('click', function() {
+	    	console.log('fav click {{ fic.id }}');
+	      $.getJSON($SCRIPT_ROOT + '/_favorite', {fic_id: "{{ fic.id }}"}, function(data) {
+	        $("#fic_options_test_{{ fic.id }}").text(data.result);
+	      });
+	      return false;
+	    });
+	  });
+</script>
+<li>
+	<div class="fic" style="overflow:hidden">
+	<div class="fic_info" style="float:left; width:85%">
+	<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small></h3>
+	{{ fic.summary|safe }}
+	<p>{{ fic.pub_date }} - {{ fic.upd_date }}</p>
+	</div>
+	<div class="fic_options" style="float:left" class="btn-group pull-right" role="group" aria-label="...">
+		<button type="button" class="btn btn-default {{ 'active' if g.user.is_favorited(fic) else ''}}" aria-label="Favorite" data-toggle="button" aria-pressed="{{ g.user.is_favorited(fic) }}">
+			<a href="#" id="favorite_{{ fic.id }}"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></a>
+		</button>
+  		<button type="button" class="btn btn-default" aria-label="Hide">
+  			<a href="#" id="hide_{{ fic.id }}"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></a>
+		</button>
+		<p id="fic_options_test_{{ fic.id }}">testing {{ fic.id }}</p>
+	</div>
+	</div>
+</li>

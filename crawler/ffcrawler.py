@@ -27,7 +27,7 @@ def main(argv):
 
 def crawl(driver, page_url, limit, artoo_path, extract_path, output_path):
     start_time = time.time()
-    i = 11319
+    i = 11830
     while i < limit:
         page = page_url % {"page" : i}
         print "Fetching " + page

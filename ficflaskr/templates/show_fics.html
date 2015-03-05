@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
+  favs : {{ g.user.favorited_fics.all() }}
   <ul class=ficlist>
   <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
   {% for fic in fics.items %}
-    <li><h3><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small></h3>{{ fic.summary|safe }}<p>{{ fic.pub_date }} - {{ fic.upd_date }}</p></li>
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em></li>
+    {% include "fic.html" %}
+    <hr>
   {% endfor %}
   </ul>
   <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>

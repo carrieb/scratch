@@ -3,10 +3,26 @@ from datetime import datetime
 import json
 import collections
 
+hidden_fics = db.Table('hidden_fics',
+	db.Column('fic_id', db.Integer, db.ForeignKey('fic.id')),
+	db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+)
+
+favorited_fics = db.Table('favorited_fics',
+	db.Column('fic_id', db.Integer, db.ForeignKey('fic.id')),
+	db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+)
+
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(80), unique=True)
 	email = db.Column(db.String(120), unique=True)
+
+	hidden_fics = db.relationship('Fic', secondary=hidden_fics,
+			backref=db.backref('hidden_users', lazy='dynamic'), lazy='dynamic')
+
+	favorited_fics = db.relationship('Fic', secondary=favorited_fics,
+			backref=db.backref('favorited_users', lazy='dynamic'), lazy='dynamic')
 
 	def is_authenticated(self):
 		return True
@@ -16,6 +32,19 @@ class User(db.Model):
 
 	def is_anonymous(self):
 		return False
+
+	def favorite(self, fic):
+		if not self.is_favorited(fic):
+			self.favorited_fics.append(fic)
+			db.session.commit()
+
+	def unfavorite(self, fic):
+		if self.is_favorited(fic):
+			self.favorited_fics.remove(fic)
+			db.session.commit()
+
+	def is_favorited(self, fic):
+		return fic in self.favorited_fics.all()
 
 	def get_id(self):
 		try:

@@ -1,7 +1,7 @@
 from ficflaskr import app, db, lm, oid
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask import request, session, g, redirect, url_for, \
-		  abort, render_template, flash
+		  abort, render_template, flash, jsonify
 from contextlib import closing
 from .forms import LoginForm
 from .models import User, Fic, Author
@@ -32,6 +32,16 @@ def show_authors(page=1):
 @app.template_filter('create_link')
 def create_link(fic):
 	return '<a href="%s">%s</a>' % (fic.url, fic.title)
+
+@app.route('/_favorite')
+def favorite():
+	fic_id = request.args.get('fic_id', 0, type=int)
+	print fic_id
+	fic = Fic.query.get(fic_id)
+	if fic and g.user is not None and g.user.is_authenticated():
+		g.user.favorite(fic)
+		return jsonify(result="Added to favs")
+	return jsonify(result="Didn't add to favs")
 
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
