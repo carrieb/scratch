@@ -94,13 +94,13 @@ class Fic(db.Model):
 	rating_id = db.Column(db.Integer, db.ForeignKey('rating.id'))
 
 	genres = db.relationship('Genre', secondary=genres,
-			backref=db.backref('fics', lazy='dynamic'))
+			backref=db.backref('fics', lazy='dynamic'), lazy="dynamic")
 
 	characters = db.relationship('Character', secondary=characters,
-			backref=db.backref('fics', lazy='dynamic'))
+			backref=db.backref('fics', lazy='dynamic'), lazy="dynamic")
 
 	pairings = db.relationship('Pairing', secondary=fic_pairings,
-			backref=db.backref('fics', lazy='dynamic'))
+			backref=db.backref('fics', lazy='dynamic'), lazy="dynamic")
 
 	def __init__(self, title, summary, url, author, pub_date, upd_date):
 		self.title = title

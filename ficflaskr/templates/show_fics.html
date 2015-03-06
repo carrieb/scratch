@@ -1,12 +1,33 @@
 {% extends "layout.html" %}
 {% block body %}
-  favs : {{ g.user.favorited_fics.all() }}
+	<script type=text/javascript>
+		$(document).keydown(function(e) {
+			e.preventDefault()
+			console.log(e.which);
+		    if(e.which == 40) {
+		    	if ($(".fic_li.active").nextAll("li").length !== 0) {
+		    		$(".fic_li.active").removeClass('active').nextAll("li:first").addClass('active');
+		    	}
+		    	if ($(".fic_li.active").length !== 0) {
+			    	$('html, body').stop(true, true).animate({
+	        			scrollTop: $(".fic_li.active").offset().top - 50
+	    			}, 1000);
+				}
+		    }
+		    if(e.which == 38) {
+
+		    }
+		});
+	</script>
   <ul class=ficlist>
-  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %}{% if fics.has_prev or fics.has_next %} | {% endif %}{% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
   {% for fic in fics.items %}
+  	{% with %}
+  	{% set first = loop.first %}
     {% include "fic.html" %}
+    {% endwith %}
     <hr>
   {% endfor %}
   </ul>
-  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %} | {% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %}{% if fics.has_prev or fics.has_next %} | {% endif %}{% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
 {% endblock %}

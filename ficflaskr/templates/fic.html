@@ -1,29 +1,37 @@
 <script type=text/javascript>
 	$(function() {
 	    $('a#favorite_{{ fic.id }}').bind('click', function() {
-	    	console.log('fav click {{ fic.id }}');
 	      $.getJSON($SCRIPT_ROOT + '/_favorite', {fic_id: "{{ fic.id }}"}, function(data) {
-	        $("#fic_options_test_{{ fic.id }}").text(data.result);
+	      	console.log(data.result);
+	        $("#favorite_button_{{ fic.id }}").addClass('active');
+	        $("#favorite_button_{{ fic.id }}").attr('aria-pressed', 'true');
+	        $("#favorite_button_{{ fic.id }}").blur()
 	      });
 	      return false;
 	    });
 	  });
 </script>
-<li>
-	<div class="fic" style="overflow:hidden">
-	<div class="fic_info" style="float:left; width:85%">
-	<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small></h3>
-	{{ fic.summary|safe }}
-	<p>{{ fic.pub_date }} - {{ fic.upd_date }}</p>
-	</div>
-	<div class="fic_options" style="float:left" class="btn-group pull-right" role="group" aria-label="...">
-		<button type="button" class="btn btn-default {{ 'active' if g.user.is_favorited(fic) else ''}}" aria-label="Favorite" data-toggle="button" aria-pressed="{{ g.user.is_favorited(fic) }}">
-			<a href="#" id="favorite_{{ fic.id }}"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></a>
-		</button>
-  		<button type="button" class="btn btn-default" aria-label="Hide">
-  			<a href="#" id="hide_{{ fic.id }}"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></a>
-		</button>
-		<p id="fic_options_test_{{ fic.id }}">testing {{ fic.id }}</p>
+<li class="fic_li{{ ' active' if first else '' }}">
+	<div class="fic" style="overflow:hidden;">
+		{% if g.user.is_authenticated() %}
+		<div class="fic_options" style="float:left; width:10%; text-align:center" class="btn-group" role="group" aria-label="...">
+			<div style="padding: 10px 0px"><a href="#" id="favorite_{{ fic.id }}"><button id="favorite_button_{{ fic.id }}" type="button" class="btn btn-default {{ 'active' if g.user.is_favorited(fic) else ''}}" aria-label="Favorite" data-toggle="button" aria-pressed="{{  g.user.is_favorited(fic) }}">
+				<span style="color:#d9534f" class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+			</button></a></div>
+	  		<div><a href="#" id="hide_{{ fic.id }}"><button type="button" class="btn btn-default" aria-label="Hide">
+	  			<span style="color:#f0ad4e" class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+			</button></a></div>
+		</div>
+		{% else %}
+		<div style="float:left; width:10%">&nbsp;</div>
+		{% endif %}
+	<div class="fic_info" style="float:left; width:90%">
+	<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small><span style="padding: 0 10px">{% for genre in fic.genres.all() %}<button type="button" class="btn btn-default btn-xs" style="padding: 0 10px; margin: 0 10px">{{ genre.name }}</button>{% endfor %}</span></h3>
+	<p class="lead">{{ fic.summary|safe }}</p>
+	<dl class="dl-horizontal"><dt>Words: {{ fic.word_cnt }} Chapters: {{ fic.chapter_cnt }}</dt><dd>Avg Chpt Len: {{ fic.word_cnt // fic.chapter_cnt }}</dd>
+	<dt>Reviews: {{ fic.review_cnt }} Favorites: {{ fic.favorite_cnt }} Follows: {{ fic.follow_cnt }}</dt><dd></dd>
+	<dt>{{ fic.pub_date.strftime("%B %d %Y") }} - {{ fic.upd_date.strftime("%B %d %Y") }}</dt><dd>{{ (fic.upd_date - fic.pub_date).days }} days - updates every ~{{ (fic.upd_date - fic.pub_date).days // fic.chapter_cnt }} days</dt>
+	</dl>
 	</div>
 	</div>
 </li>
