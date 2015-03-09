@@ -33,6 +33,19 @@ class User(db.Model):
 	def is_anonymous(self):
 		return False
 
+	def hide(self, fic):
+		if not self.is_hidden(fic):
+			self.hidden_fics.append(fic)
+			db.session.commit()
+
+	def unhide(self, fic):
+		if self.is_hidden(fic):
+			self.hidden_fics.remove(fic)
+			db.session.commit()
+
+	def is_hidden(self, fic):
+		return fic in self.hidden_fics.all()
+
 	def favorite(self, fic):
 		if not self.is_favorited(fic):
 			self.favorited_fics.append(fic)
@@ -174,6 +187,9 @@ class Pairing(db.Model):
 	def __repr__(self):
 		return '<Pairing %r>' % map(lambda s: s.name, self.characters)
 
+	def __str__(self):
+		return '/'.join(map(lambda s: s.name, self.characters))
+
 def init_db():
 	with closing(connect_db()) as db:
 		with app.open_resource('schema.sql', mode='r') as f:
@@ -282,11 +298,13 @@ def try_updating_genre(item, fic):
 		fic.genres.append(genre)
 
 def try_updating_chars(item, fic):
-	item = item.replace('] [',',').replace(']', '').replace('[','')
+	item = item.replace('] [',',').replace(']', ',', 1).replace(']', '').replace('[','')
 	chars = map(lambda s: s.strip(), item.split(','))
+	print chars
 	for c_name in chars:
-		char = get_or_create_character(c_name)
-		fic.characters.append(char)
+		if len(c_name) > 0:
+			char = get_or_create_character(c_name)
+			fic.characters.append(char)
 
 def try_updating_pairings(item, fic):
 	if '[' not in item:
@@ -295,12 +313,12 @@ def try_updating_pairings(item, fic):
 	first_chars = map(lambda s: get_or_create_character(s.strip()), first.replace('[','').split(','))
 	fic.pairings.append(get_or_create_pairing(first_chars))
 	if '[' in second:
-		second_chars = map(lambda s: get_or_create_character(s.strip()), second.replace('[','').split(','))
+		second_chars = map(lambda s: get_or_create_character(s.strip()), second.replace('[','').replace(']','').split(','))
 		fic.pairings.append(get_or_create_pairing(second_chars))
 
 
 def populate_db_from_file(filename=app.config['DB_BACKUP']):
-	with app.open_resource(app.config['DB_BACKUP'], mode='r') as f:
+	with app.open_resource(filename, mode='r') as f:
 		json_obj = json.load(f)
 		for fic_obj in json_obj:
 			# Add author
@@ -316,7 +334,9 @@ def populate_db_from_file(filename=app.config['DB_BACKUP']):
 		anAuthorsFic = Author.query.first().fics.all()[0]
 		fics = Fic.query.order_by(Fic.title).all()
 
-def refresh():
+def refresh(limit=1):
 	db.drop_all()
 	db.create_all()
-	populate_db_from_file()
+	for i in xrange(limit):
+		print i
+		populate_db_from_file('data/fanfic_data_'+str(i) +'.json');

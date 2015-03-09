@@ -1,0 +1,6 @@
+<nav>
+  <ul class="pager">
+    <li class="previous{{ '' if fics.has_prev else ' disabled' }}"><a href="{{ url_for('show_fics', page=fics.prev_num) if fics.has_prev else '#' }}"><span aria-hidden="true">&larr;</span> Older</a></li>
+    <li class="nextm{ '' if fics.has_next else ' disabled' }}" style="float: right"><a href="{{ url_for('show_fics', page=fics.next_num) if fics.has_next else '#' }}">Newer <span aria-hidden="true">&rarr;</span></a></li>
+  </ul>
+</nav>

@@ -2,9 +2,8 @@
 {% block body %}
 	<script type=text/javascript>
 		$(document).keydown(function(e) {
-			e.preventDefault()
-			console.log(e.which);
 		    if(e.which == 40) {
+		    	e.preventDefault()
 		    	if ($(".fic_li.active").nextAll("li").length !== 0) {
 		    		$(".fic_li.active").removeClass('active').nextAll("li:first").addClass('active');
 		    	}
@@ -19,8 +18,22 @@
 		    }
 		});
 	</script>
+  <div class="collapse" id="filters">
+  <form action="" method="get" name="filters">
+  	<div class="form-group">
+  	Word Count: {{ form.word_cnt(size=80, class="form-control") }}
+  	{% for error in form.word_cnt.errors %}
+      <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
+    Genre: {{ form.genre(class="form-control") }}
+    Characters: {{ form.characters(class="form-control") }}
+    Pairings: {{ form.pairings(class="form-control") }}
+  	<input class="btn btn-default" type="submit" value="Go">
+  </div>
+  </form>
+	</div>
+	{% include 'pagination.html' %}
   <ul class=ficlist>
-  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %}{% if fics.has_prev or fics.has_next %} | {% endif %}{% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
   {% for fic in fics.items %}
   	{% with %}
   	{% set first = loop.first %}
@@ -29,5 +42,5 @@
     <hr>
   {% endfor %}
   </ul>
-  <p class="text-center">{% if fics.has_prev %}<a href="{{ url_for('show_fics', page=fics.prev_num) }}">&lt;&lt; {{ fics.prev_num }}</a>{% else %}{% endif %}{% if fics.has_prev or fics.has_next %} | {% endif %}{% if fics.has_next %}<a href="{{ url_for('show_fics', page=fics.next_num) }}">{{ fics.next_num }} &gt;&gt;</a>{% else %}{% endif %}</p>
+  {% include 'pagination.html' %}
 {% endblock %}
