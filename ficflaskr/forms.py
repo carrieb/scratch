@@ -1,13 +1,24 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, IntegerField, SelectMultipleField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 class LoginForm(Form):
 	openid = StringField('openid', validators=[DataRequired()])
 	remember_me = BooleanField('remember_me', default=False)
 
 class FilterForm(Form):
-	genre = SelectMultipleField('genre', [])
-	characters = SelectMultipleField('characters', [])
-	pairings = SelectMultipleField('pairings', [])
-	word_cnt = IntegerField('word_cnt')
+	# Autocomplete strings
+	saved_filters_autocomplete = StringField('saved filters autocomplete')
+	character_autocomplete = StringField('character autocomplete')
+	genre_autocomplete = StringField('genre autocomplete')
+	pairing_autocomplete = StringField('pairing autocomplete')
+
+	# Boolean fields
+	one_shot = BooleanField('one chapter')
+	complete = BooleanField('complete')
+
+	# Scalar fields
+	word_min = IntegerField('word min')
+	word_max = IntegerField('word max')
+	avg_chapter_length_min = IntegerField('min avg words per chapter')
+

@@ -1,0 +1,85 @@
+<div class="collapse" id="filters">
+  <!-- Logged in filter options -->
+  {% if g.user.is_authenticated() %}
+    {% set current_filter = g.user.is_query_string_saved_fitler(request.query_string) %}
+    {% if current_filter is not none %}
+      <!-- IDEA: When already saved, disable the input group, make placeholder text the name of filter, button looks pressed, and pressing it again unsaves it???  -->
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <div class="input-group" style="text-align:center">
+            <input disabled id="filter_name" type="text" class="form-control" placeholder="'{{ current_filter.name }}'' is the current filter.">
+            <span class="input-group-btn">
+              <!-- TODO : Actual add ability to forget -->
+              <button id="unfavorite_query" class="btn btn-default" type="button"><span class="glyphicon glyphicon-trash" aria-hidden="true">&nbsp;</span>Forget</button>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      <hr>
+    {% endif %}
+    {% if request.query_string != '' and current_filter is none %}
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <div class="input-group" style="text-align:center">
+            <input id="filter_name" type="text" class="form-control" placeholder="Save current filter as...">
+            <span class="input-group-btn">
+              <button id="favorite_query" class="btn btn-default" type="button"><span class="glyphicon glyphicon-star" aria-hidden="true">&nbsp;</span>Save Current Filter</button>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      <hr>
+    {% endif %}
+  {% endif %}
+  <!-- filter form -->
+  <form action="" method="get" name="filters">
+     {% if g.user.is_authenticated() and g.user.saved_filters.count() > 0 %}
+      <div class="form-group">
+        <label>Saved Filers:</label>
+        {{ form.saved_filters_autocomplete(class="form-control typeahead", autocomplete="off", placeholder="Saved Filter", id="filter_auto") }}
+      </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Word Min:</label>
+          {{ form.word_min(class="form-control", placeholder="e.g. 2000") }}
+        </div>
+        <div class="form-group">
+          <label>Word Max:</label>
+          {{ form.word_max(class="form-control", placeholder="e.g. 10000") }}
+        </div>
+        <div class="form-group">
+          <label>Average Chapter Length:</label>
+          {{ form.avg_chapter_length_min(class="form-control", placeholder="e.g. 2500", title="Minimum average chapter length") }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Genre:</label>
+          {{ form.genre_autocomplete(class="form-control typeahead", autocomplete="off", placeholder="Genres", id="genre_auto") }}
+        </div>
+        <div class="form-group">
+          <label>Characters:</label>
+          {{ form.character_autocomplete(class="form-control", autocomplete="off", placeholder="Characters", id="char_auto", **{'data-role':'tagsinput'}) }}
+        </div>
+        <div class="form-group">
+          <label>Pairings:</label>
+          {{ form.pairing_autocomplete(class="form-control typeahead", autocomplete="off", placeholder="Pairings", id="pairing_auto") }}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+    <div class="col-md-4 col-md-offset-8">
+      <span style="padding-right:15px">{{ form.one_shot(type="checkbox") }} <b>One-shot</b></span>
+      <span style="padding-right:15px">{{ form.complete(type="checkbox") }} <b>Complete</b></span>
+  	<input class="btn btn-success btn-lg pull-right" type="submit" value="Go">
+  </div>
+    </div>
+  </form>
+  <hr>
+</div>

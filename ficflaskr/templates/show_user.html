@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% if user %}
+
+<div style="text-align: center">
+	{{ user.username }}<br>
+	{{ user.email }}
+</div>
+<hr>
+
+<div>
+<p class="lead" style="padding-left:10px"> Saved Filters </p>
+<hr>
+{% for fltr in user.saved_filters.all() %}
+	{{ fltr.query_string }}
+	<hr>
+{% endfor %}	
+</div>
+
+<div>
+<p class="lead" style="padding-left:10px"> Favorites </p>
+<hr>
+{% for fic in user.favorited_fics.all() %}
+	{% include "fic.html" %}
+	<hr>
+{% endfor %}
+</div>
+
+<div>
+<p class="lead" style="padding-left:10px"> Hidden </p>
+<hr>
+{% for fic in user.hidden_fics.all() %}
+	{% include "fic.html" %}
+	<hr>
+{% endfor %}	
+</div>
+
+
+{% else %}
+User does not exist
+{% endif %}
+
+{% endblock %}

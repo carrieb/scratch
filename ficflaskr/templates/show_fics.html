@@ -2,36 +2,25 @@
 {% block body %}
 	<script type=text/javascript>
 		$(document).keydown(function(e) {
-		    if(e.which == 40) {
-		    	e.preventDefault()
-		    	if ($(".fic_li.active").nextAll("li").length !== 0) {
-		    		$(".fic_li.active").removeClass('active').nextAll("li:first").addClass('active');
-		    	}
-		    	if ($(".fic_li.active").length !== 0) {
-			    	$('html, body').stop(true, true).animate({
-	        			scrollTop: $(".fic_li.active").offset().top - 50
-	    			}, 1000);
-				}
-		    }
-		    if(e.which == 38) {
+      // TODO: Add some type of down/up ability with the keyboard (WHEN NOT FOCUSED ON AUTOCOMPLETE)
+		  //   if(e.which == 40) {
+		  //   	e.preventDefault()
+		  //   	if ($(".fic_li.active").nextAll("li").length !== 0) {
+		  //   		$(".fic_li.active").removeClass('active').nextAll("li:first").addClass('active');
+		  //   	}
+		  //   	if ($(".fic_li.active").length !== 0) {
+			 //    	$('html, body').stop(true, true).animate({
+	   //      			scrollTop: $(".fic_li.active").offset().top - 50
+	   //  			}, 1000);
+				// }
+		  //   }
+		  //   if(e.which == 38) {
 
-		    }
+		  //   }
 		});
+
 	</script>
-  <div class="collapse" id="filters">
-  <form action="" method="get" name="filters">
-  	<div class="form-group">
-  	Word Count: {{ form.word_cnt(size=80, class="form-control") }}
-  	{% for error in form.word_cnt.errors %}
-      <span style="color: red;">[{{error}}]</span>
-        {% endfor %}<br>
-    Genre: {{ form.genre(class="form-control") }}
-    Characters: {{ form.characters(class="form-control") }}
-    Pairings: {{ form.pairings(class="form-control") }}
-  	<input class="btn btn-default" type="submit" value="Go">
-  </div>
-  </form>
-	</div>
+  {% include 'fic_filters.html' %}
 	{% include 'pagination.html' %}
   <ul class=ficlist>
   {% for fic in fics.items %}
@@ -43,4 +32,19 @@
   {% endfor %}
   </ul>
   {% include 'pagination.html' %}
+  <script src="{{ url_for('static', filename='scripts/show_fics.js') }}"></script>
+  <script type=text/javascript>
+    setupFilterAutocomplete("{{ user.id if g.user.is_authenticated() else '' }}");
+  </script>
+  <script type=text/javascript>
+  $('#favorite_query').bind('click', function(e) {
+    console.log('hey', "{{ request.query_string }}")
+    $.getJSON($SCRIPT_ROOT + '/_save_filter', {query: "{{ request.query_string }}", name: $("#filter_name").val()}, function(data) {
+       console.log(data)
+       filters.clearPrefetchCache();
+       filters.initialize();
+    });
+    e.preventDefault()
+  });
+  </script>
 {% endblock %}

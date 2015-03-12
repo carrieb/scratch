@@ -13,6 +13,11 @@ favorited_fics = db.Table('favorited_fics',
 	db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+saved_filters = db.Table('saved_filters',
+	db.Column('filter_id', db.Integer, db.ForeignKey('filter.id')),
+	db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+)
+
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(80), unique=True)
@@ -23,6 +28,9 @@ class User(db.Model):
 
 	favorited_fics = db.relationship('Fic', secondary=favorited_fics,
 			backref=db.backref('favorited_users', lazy='dynamic'), lazy='dynamic')
+
+	saved_filters = db.relationship('Filter', secondary=saved_filters,
+			backref=db.backref('saved_users', lazy='dynamic'), lazy='dynamic')
 
 	def is_authenticated(self):
 		return True
@@ -59,6 +67,44 @@ class User(db.Model):
 	def is_favorited(self, fic):
 		return fic in self.favorited_fics.all()
 
+	def is_saved(self, fltr):
+		return fltr in self.saved_filters.all()
+
+	def is_query_string_saved_fitler(self, query_string):
+		res = []
+		for s in query_string.split('&'):
+			if not s.endswith('='):
+				res.append(s)
+		query = '&'.join(res)
+		fltr = Filter.query.filter_by(query_string=query).first()
+		return fltr
+
+	def is_saved_fitler(self, name):
+		fltr = self.saved_filters.filter_by(name=name).first()
+		if fltr:
+			return True
+		else:
+			return False
+
+	def get_or_create_filter(self, name, query):
+		fltr = self.saved_filters.filter_by(name=name).filter_by(query=query).first()
+		if fltr:
+			return fltr
+		else:
+			fltr = Filter(name, query)
+			db.session.add(fltr)
+			return fltr
+
+	def save(self, fltr):
+		if not self.is_saved(fltr):
+			self.saved_filters.append(fltr)
+			db.session.commit()
+
+	def unsave(self, fltr):
+		if self.is_saved(fltr):
+			self.saved_filters.remove(fltr)
+			db.session.commit()
+
 	def get_id(self):
 		try:
 			return unicode(self.id)
@@ -71,6 +117,18 @@ class User(db.Model):
 
 	def __repr__(self):
 		return '<User %r>' % self.username
+
+class Filter(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	query_string = db.Column(db.String(200), unique=True)
+	name = db.Column(db.String(80))
+
+	def __init__(self, name, query_string):
+		self.name = name
+		self.query_string = query_string
+
+	def __repr__(self):
+		return '<Filter %r:%r>' % (self.name, self.query_string)
 
 characters = db.Table('characters',
     db.Column('fic_id', db.Integer, db.ForeignKey('fic.id')),

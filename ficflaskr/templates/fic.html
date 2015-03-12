@@ -17,9 +17,9 @@
 	  });
 </script>
 <li class="collapse in fic_li{{ ' active' if first else '' }}">
-	<div class="fic" style="overflow:hidden;">
+	<div class="fic row" style="overflow:hidden;">
 		{% if g.user.is_authenticated() %}
-		<div class="fic_options" style="float:left; width:10%; text-align:center" class="btn-group" role="group" aria-label="...">
+		<div class="fic_options col-md-1" role="group" aria-label="...">
 			<div style="padding: 10px 0px"><a href="#" id="favorite_{{ fic.id }}"><button id="favorite_button_{{ fic.id }}" type="button" class="btn btn-default {{ 'active' if g.user.is_favorited(fic) else ''}}" aria-label="Favorite" data-toggle="button" aria-pressed="{{  g.user.is_favorited(fic) }}">
 				<span style="color:#d9534f" class="glyphicon glyphicon-heart" aria-hidden="true"></span>
 			</button></a></div>
@@ -28,15 +28,28 @@
 			</button></a></div>
 		</div>
 		{% else %}
-		<div style="float:left; width:10%">&nbsp;</div>
+		<div class="col-md-1">&nbsp;</div>
 		{% endif %}
-	<div class="fic_info" style="float:left; width:90%">
+	<div class="fic_info col-md-11">
 	<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small><span style="padding: 0 10px">{% for genre in fic.genres.all() %}<button type="button" class="btn btn-default btn-xs" style="padding: 0 10px; margin: 0 10px">{{ genre.name }}</button>{% endfor %}</span></h3>
+	<div style="margin-bottom: 5px">
+		{% for char in fic.characters.all() %}
+			<button type="button" class="btn btn-default btn-xs btn-info" style="padding: 0 10px; margin-right: 10px">{{ char.name }}</button>
+			<!-- <img class="img-circle" src="{{ url_for('static', filename='images/' + char.id|string + '.jpg') }}"> -->
+		{% endfor %}
+		{% for pairing in fic.pairings.all() %}
+		<button type="button" class="btn btn-default btn-xs btn-success" style="padding: 0 10px; margin-right: 10px">{{ pairing|string }}</button>
+		{% endfor %}
+	</div>
 	<p class="lead">{{ fic.summary|safe }}</p>
 	<dl class="dl-horizontal"><dt>Words: {{ fic.word_cnt }} Chapters: {{ fic.chapter_cnt }}</dt><dd>Avg Chpt Len: {{ fic.word_cnt // fic.chapter_cnt }}</dd>
 	<dt>Reviews: {{ fic.review_cnt }} Favorites: {{ fic.favorite_cnt }} Follows: {{ fic.follow_cnt }}</dt><dd></dd>
 	<dt>{{ fic.pub_date.strftime("%B %d %Y") }} - {{ fic.upd_date.strftime("%B %d %Y") }}</dt><dd>{{ (fic.upd_date - fic.pub_date).days }} days - updates every ~{{ (fic.upd_date - fic.pub_date).days // fic.chapter_cnt }} days</dt>
+	{% if fic.completed %}
+	<dt>Complete</dt><dd></dd>
+	{% endif %}
 	</dl>
+	
 	</div>
 	</div>
 </li>
