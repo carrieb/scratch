@@ -30,26 +30,40 @@
 		{% else %}
 		<div class="col-md-1">&nbsp;</div>
 		{% endif %}
-	<div class="fic_info col-md-11">
-	<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small><span style="padding: 0 10px">{% for genre in fic.genres.all() %}<button type="button" class="btn btn-default btn-xs" style="padding: 0 10px; margin: 0 10px">{{ genre.name }}</button>{% endfor %}</span></h3>
-	<div style="margin-bottom: 5px">
-		{% for char in fic.characters.all() %}
-			<button type="button" class="btn btn-default btn-xs btn-info" style="padding: 0 10px; margin-right: 10px">{{ char.name }}</button>
-			<!-- <img class="img-circle" src="{{ url_for('static', filename='images/' + char.id|string + '.jpg') }}"> -->
-		{% endfor %}
-		{% for pairing in fic.pairings.all() %}
-		<button type="button" class="btn btn-default btn-xs btn-success" style="padding: 0 10px; margin-right: 10px">{{ pairing|string }}</button>
-		{% endfor %}
-	</div>
-	<p class="lead">{{ fic.summary|safe }}</p>
-	<dl class="dl-horizontal"><dt>Words: {{ fic.word_cnt }} Chapters: {{ fic.chapter_cnt }}</dt><dd>Avg Chpt Len: {{ fic.word_cnt // fic.chapter_cnt }}</dd>
-	<dt>Reviews: {{ fic.review_cnt }} Favorites: {{ fic.favorite_cnt }} Follows: {{ fic.follow_cnt }}</dt><dd></dd>
-	<dt>{{ fic.pub_date.strftime("%B %d %Y") }} - {{ fic.upd_date.strftime("%B %d %Y") }}</dt><dd>{{ (fic.upd_date - fic.pub_date).days }} days - updates every ~{{ (fic.upd_date - fic.pub_date).days // fic.chapter_cnt }} days</dt>
-	{% if fic.completed %}
-	<dt>Complete</dt><dd></dd>
-	{% endif %}
-	</dl>
-	
-	</div>
+		<div class="fic_info col-md-11">
+			<h3 style="margin-top:0"><a href="{{ fic.url }}">{{ fic.title }}</a><small> by {{ fic.author.name }}</small></h3>
+			<div class="btn-toolbar" style="padding-bottom: 10px">
+				<div class="btn-group btn-group-sm" role="group">
+					<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Average {{ fic.word_cnt // fic.chapter_cnt }} words per chapter">Words <b>{{ fic.word_cnt }}</b></button>
+					<button class="btn btn-default" type="button">Chapters <b>{{ fic.chapter_cnt }}</b></button>
+				</div>
+				<div class="btn-group btn-group-sm" role="group">
+					<button class="btn btn-default" type="button">Reviews <b>{{ fic.review_cnt }}</b></button>
+					<button class="btn btn-default" type="button">Favorites <b>{{ fic.favorite_cnt }}</b></button>
+					<button class="btn btn-default" type="button">Follows <b>{{ fic.follow_cnt }}</b></button>
+				</div>
+				<div class="btn-group btn-group-sm" role="group">
+					<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Active for {{ (fic.upd_date - fic.pub_date).days + 1 }} days">Published <b>{{ fic.pub_date.strftime('%b %d %Y') }}</b>
+					<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Updates every ~{{ (fic.upd_date - fic.pub_date).days // fic.chapter_cnt }} days">Updated <b>{{ fic.upd_date.strftime('%b %d %Y') }}</b>
+				</div>
+			</div>
+			<blockquote><p class="lead">{{ fic.summary|safe }}</p></blockquote>
+			<div class="text-center">
+				<a style="color: gray" data-toggle="collapse" href="#advanced_section_{{fic.id}}" aria-controls="advanced_section_{{fic.id}}" aria-expanded="false">Advanced <span class="caret"></span></a>
+			</div>
+			<div class="collapse" id="advanced_section_{{ fic.id }}" style="text-align:center; margin-top: 10px">
+				<div style="float: left">
+				{% for char in fic.characters.all() %}
+					<a href="{{ url_for('show_fics', page=1) + '?character_autocomplete=' + char.name }}" class="btn btn-default btn-sm btn-info" style="padding: 0 10px; margin-right: 10px">{{ char.name }}</a>
+					<!-- <img class="img-circle" src="{{ url_for('static', filename='images/' + char.id|string + '.jpg') }}"> -->
+				{% endfor %} 
+				</div>
+				{% for pairing in fic.pairings.all() %}
+				<a href="{{ url_for('show_fics', page=1) + '?pairing_autocomplete=' + pairing|string }}" class="btn btn-default btn-sm btn-success" style="padding: 0 10px; margin-right: 10px">{{ pairing|string }}</a>
+				{% endfor %}
+				<div style="float:right">
+				{% for genre in fic.genres.all() %}<a href="{{ url_for('show_fics', page=1) + '?genre_autocomplete=' + genre.name }}" class="btn btn-warning btn-sm" style="padding: 0 10px; margin: 0 10px">{{ genre.name }}</a>{% endfor %}</div>
+			</div>
+		</div>
 	</div>
 </li>

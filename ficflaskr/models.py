@@ -153,11 +153,11 @@ class Fic(db.Model):
 	pub_date = db.Column(db.DateTime)
 	upd_date = db.Column(db.DateTime)
 
-	favorite_cnt = db.Column(db.Integer)
-	follow_cnt = db.Column(db.Integer)
-	word_cnt = db.Column(db.Integer)
-	chapter_cnt = db.Column(db.Integer)
-	review_cnt = db.Column(db.Integer)
+	favorite_cnt = db.Column(db.Integer, default = 0)
+	follow_cnt = db.Column(db.Integer, default = 0)
+	word_cnt = db.Column(db.Integer, default = 0)
+	chapter_cnt = db.Column(db.Integer, default = 0)
+	review_cnt = db.Column(db.Integer, default = 0)
 
 	completed = db.Column(db.Boolean)
 
@@ -241,6 +241,7 @@ class Character(db.Model):
 
 class Pairing(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String)
 
 	def __repr__(self):
 		return '<Pairing %r>' % map(lambda s: s.name, self.characters)
@@ -303,6 +304,7 @@ def create_pairing(characters):
 	pairing = Pairing()
 	for c in characters:
 		pairing.characters.append(c)
+	pairing.name = '/'.join([c.name for c in pairing.characters.all()])
 	return pairing
 
 def get_or_create_pairing(characters):

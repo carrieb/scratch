@@ -114,3 +114,7 @@ $('#pairing_auto').tagsinput({
   }
 });
 
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+

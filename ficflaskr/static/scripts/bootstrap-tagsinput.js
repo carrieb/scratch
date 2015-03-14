@@ -314,10 +314,11 @@
       }
 
       // typeahead.js
+      console.log(self.options.typeaheadjs)
       if (self.options.typeaheadjs) {
           var typeaheadjs = self.options.typeaheadjs || {};
           
-          self.$input.typeahead({highlight:true}, typeaheadjs).on('typeahead:selected', $.proxy(function (obj, datum) {
+          self.$input.typeahead({highlight: true}, typeaheadjs).on('typeahead:selected', $.proxy(function (obj, datum) {
             if (typeaheadjs.valueKey)
               self.add(datum[typeaheadjs.valueKey]);
             else

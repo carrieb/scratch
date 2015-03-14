@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<script>
+$('#myTab a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+</script>
+
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#fics" aria-controls="fics" role="tab" data-toggle="tab">Fics</a></li>
+    <li role="presentation"><a href="#characters" aria-controls="characters" role="tab" data-toggle="tab">Characters</a></li>
+    <li role="presentation"><a href="#pairings" aria-controls="pairings" role="tab" data-toggle="tab">Pairings</a></li>
+    <li role="presentation"><a href="#genres" aria-controls="genres" role="tab" data-toggle="tab">Genres</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="fics">
+      <div class="row" style="padding-top:20px">
+        <div class="col-md-1">Left Arrow</div>
+        <div class="col-md-5">
+          <h4>Most Favorite</h4>
+          {% include 'accordion.html' %}
+        </div>
+        <div class="col-md-5">
+          <h4>Most Followed</h4>
+        </div>
+        <div class="col-md-1">Right Arrow</div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="characters">...</div>
+    <div role="tabpanel" class="tab-pane fade" id="pairings">...</div>
+    <div role="tabpanel" class="tab-pane fade" id="generes">...</div>
+  </div>
+
+</div>
+
+{% endblock %}

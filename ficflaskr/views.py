@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, session, g, redirect, url_for, \
 		  abort, render_template, flash, jsonify
 from contextlib import closing
-from .forms import LoginForm, FilterForm
+from .forms import FilterForm
 from .models import User, Fic, Author, Genre, Character, Pairing, Filter
 import json
 import urllib
@@ -79,6 +79,10 @@ def show_user(username=""):
 		user = User.query.filter_by(username=username).first()
 		return render_template('show_user.html', user=user)
 
+@app.route('/tops')
+def show_tops():
+	return render_template('top.html', user=g.user, fic_list=Fic.query.order_by('favorite_cnt')[:25])
+
 @app.route('/')
 @app.route('/fics')
 @app.route('/fics/<int:page>')
@@ -137,15 +141,7 @@ def login():
 	if g.user is not None and g.user.is_authenticated():
 		print g.user
 		return redirect(url_for('show_fics', page=1))
-	form = LoginForm()
-	if form.validate_on_submit():
-		session['remember_me'] = form.remember_me.data
-		print "Trying oid"
-		return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
-	return render_template('login.html', 
-							title='Sign In',
-							form=form,
-							providers=app.config['OPENID_PROVIDERS'])
+	return oid.try_login('https://www.google.com/accounts/o8/id', ask_for=['nickname', 'email'])
 
 @oid.after_login
 def after_login(resp):

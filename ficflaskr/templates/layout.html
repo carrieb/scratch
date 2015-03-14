@@ -10,7 +10,7 @@
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
-<div class=page>
+<div class="page panel panel-default">
   {% include 'navbar.html' %}
   {% for message in get_flashed_messages() %}
     <div class=flash>{{ message }}</div>
