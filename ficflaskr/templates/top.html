@@ -2,16 +2,18 @@
 {% block body %}
 
 <script>
-$('#myTab a').click(function (e) {
+$('#topsTabs a').click(function (e) {
   e.preventDefault()
   $(this).tab('show')
 })
+
+
 </script>
 
 <div role="tabpanel">
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
+  <ul class="nav nav-tabs" role="tablist" id="topsTabs">
     <li role="presentation" class="active"><a href="#fics" aria-controls="fics" role="tab" data-toggle="tab">Fics</a></li>
     <li role="presentation"><a href="#characters" aria-controls="characters" role="tab" data-toggle="tab">Characters</a></li>
     <li role="presentation"><a href="#pairings" aria-controls="pairings" role="tab" data-toggle="tab">Pairings</a></li>
@@ -20,24 +22,53 @@ $('#myTab a').click(function (e) {
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane fade in active" id="fics">
-      <div class="row" style="padding-top:20px">
-        <div class="col-md-1">Left Arrow</div>
-        <div class="col-md-5">
-          <h4>Most Favorite</h4>
-          {% include 'accordion.html' %}
-        </div>
-        <div class="col-md-5">
-          <h4>Most Followed</h4>
-        </div>
-        <div class="col-md-1">Right Arrow</div>
-      </div>
+
+    {% for tab_name, fic_lists in res_dict.iteritems() %}
+    <div role="tabpanel" class="tab-pane fade{{ ' in active' if loop.first else '' }}" id="{{ tab_name }}" data-length="{{ fic_lists|length }}">
+      {% include 'top_content.html' %}
     </div>
-    <div role="tabpanel" class="tab-pane fade" id="characters">...</div>
-    <div role="tabpanel" class="tab-pane fade" id="pairings">...</div>
-    <div role="tabpanel" class="tab-pane fade" id="generes">...</div>
+    {% endfor %}
+
   </div>
 
 </div>
+
+<script> 
+  $(".right").click(function(e) { 
+    e.preventDefault(); 
+    var tabID = e.target.getAttribute('data-tab');
+    var $tab = $("#"+tabID);
+    var tabLength = $tab.data('length');
+    
+    var $firstVisible = $tab.find(".visible").first();
+    var firstNum = $firstVisible.data('num');
+    console.log($firstVisible, firstNum, tabLength - 1);
+    if (firstNum < tabLength - 1) {
+      $firstVisible.removeClass("visible").addClass("hidden");
+
+      var $toShow = $firstVisible.nextAll(".hidden").first();
+      if ($toShow.length > 0) {
+        $toShow.removeClass("hidden").addClass("visible");
+      }
+    }
+  });
+  $(".left").click(function(e) { 
+    e.preventDefault(); 
+    var tabID = e.target.getAttribute('data-tab');
+    var $tab = $("#"+tabID);
+    
+    var $lastVisible = $tab.find(".visible").last();
+    var lastNum = $lastVisible.data('num');
+    console.log($lastVisible, lastNum, 2);
+    if (lastNum > 2) {
+      $lastVisible.removeClass("visible").addClass("hidden");
+
+      var $toShow = $lastVisible.prevAll(".hidden").first();
+      if ($toShow.length > 0) {
+        $toShow.removeClass("hidden").addClass("visible");
+      }
+    }
+  });
+</script>
 
 {% endblock %}

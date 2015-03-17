@@ -1,0 +1,10 @@
+<div class="row" style="padding-top:20px">
+<div class="col-md-1" style="text-align:center; padding-top:50px"><a href="#"><span id="{{ tab_name }}_left" class="glyphicon glyphicon-chevron-left left" aria-hidden="true" data-tab="{{ tab_name }}"></span></a></div>
+{% for name, fic_list in fic_lists.iteritems() %}
+  <div class="col-md-5{{ ' hidden' if loop.index > 2 else ' visible'}}" id="{{ tab_name }}_{{ loop.index }}" data-num="{{ loop.index }}">
+    <h4>{{ name }}</h4>
+	{% include tab_name + '_accordion.html' %}
+  </div>
+{% endfor %}
+<div class="col-md-1" style="text-align:center; padding-top:50px"><a href="#"><span id="{{ tab_name }}_right" class="glyphicon glyphicon-chevron-right right" aria-hidden="true" data-tab="{{ tab_name }}"></span></a></div>
+</div>

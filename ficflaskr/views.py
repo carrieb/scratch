@@ -4,9 +4,10 @@ from flask import request, session, g, redirect, url_for, \
 		  abort, render_template, flash, jsonify
 from contextlib import closing
 from .forms import FilterForm
-from .models import User, Fic, Author, Genre, Character, Pairing, Filter
+from .models import User, Fic, Author, Genre, Character, Pairing, Filter, get_most_popular_chars, get_most_popular_pairings
 import json
 import urllib
+from sqlalchemy import desc, func
 
 @lm.user_loader
 def load_user(id):
@@ -38,13 +39,6 @@ def query_fics_given_form(form):
 		pairings = form.pairing_autocomplete.data.split(',')
 		query = query.filter(Fic.pairings.any(Pairing.name.in_(pairings)))
 	return query
-
-@app.route('/_character_autocomplete')
-def character_autocomplete():
-	term = request.args.get('term')
-	search = term + '%' if len(term) <= 5 else '%' + term + '%'
-	similar_chars = Character.query.filter(Character.name.like(search)).all()
-	return jsonify(json_list=[char.name for char in similar_chars])
 
 def cleanup_query(query):
 	query = query.replace("&amp;", "&")
@@ -81,7 +75,15 @@ def show_user(username=""):
 
 @app.route('/tops')
 def show_tops():
-	return render_template('top.html', user=g.user, fic_list=Fic.query.order_by('favorite_cnt')[:25])
+	fic_dict = { 'Most Favorite' : Fic.query.order_by(desc(Fic.favorite_cnt))[:25],
+				 'Most Followed' : Fic.query.order_by(desc(Fic.follow_cnt))[:25] }
+	char_dict = { 'Most Popular' : get_most_popular_chars() }
+	pair_dict = { 'Most Popular' : get_most_popular_pairings() }
+	gen_dict = {}
+	for genre in Genre.query.order_by('name').all():
+		gen_dict[genre.name + " Most Popular"] = genre.fics.order_by('favorite_cnt').all()[:25]
+	res_dict = { 'fics' : fic_dict, 'characters': char_dict, 'pairings': pair_dict, 'genres': gen_dict }
+	return render_template('top.html', user=g.user, res_dict=res_dict)
 
 @app.route('/')
 @app.route('/fics')

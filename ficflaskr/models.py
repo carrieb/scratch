@@ -2,6 +2,7 @@ from ficflaskr import db, app
 from datetime import datetime
 import json
 import collections
+from sqlalchemy import func
 
 hidden_fics = db.Table('hidden_fics',
 	db.Column('fic_id', db.Integer, db.ForeignKey('fic.id')),
@@ -400,3 +401,9 @@ def refresh(limit=1):
 	for i in xrange(limit):
 		print i
 		populate_db_from_file('data/fanfic_data_'+str(i) +'.json');
+
+def get_most_popular_chars():
+	return db.session.query(Character, func.count(characters.c.fic_id).label('total')).join(characters).group_by(Character).order_by('total DESC').all()[:25]
+
+def get_most_popular_pairings():
+	return db.session.query(Pairing, func.count(fic_pairings.c.fic_id).label('total')).join(fic_pairings).group_by(Pairing).order_by('total DESC').all()[:25]

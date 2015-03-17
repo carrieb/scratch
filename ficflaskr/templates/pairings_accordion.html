@@ -1,0 +1,18 @@
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  {% for pairing, total in fic_list %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading_p{{ pairing.id }}">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_p{{ pairing.id }}" aria-expanded="true" aria-controls="collapse_p{{ pairing.id }}">
+          {{ loop.index }}. {{ pairing|string }} <small> {{ total }}</small>
+        </a>
+      </h4>
+    </div>
+    <div id="collapse_p{{ pairing.id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_p{{ pairing.id }}">
+      <div class="panel-body">
+        <p style="padding-left:15px; border-left: thick solid #ddd"> TODO : PUT FICS </p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
