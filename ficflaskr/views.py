@@ -117,10 +117,10 @@ def hide():
 	if fic and g.user is not None and g.user.is_authenticated():
 		if g.user.is_hidden(fic):
 			g.user.unhide(fic)
-			return jsonify(result="unHid fic")
+			return json.dumps({ 'hidden': False })
 		else:
 			g.user.hide(fic)
-			return jsonify(result="hid fic")
+			return json.dumps({ 'hidden': True })
 	return jsonify(result="didn't find fic to hide")
 
 @app.route('/_favorite')

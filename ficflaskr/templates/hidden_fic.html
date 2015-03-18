@@ -1,0 +1,6 @@
+<div id="{{ fic.id }}_control" class="text-center" {% if g.user.is_authenticated() and not g.user.is_hidden(fic) %}style="display:none"{% endif %}>
+	<a style="color: gray" data-toggle="collapse" href="#hidden_{{fic.id}}" aria-controls="hidden_{{fic.id}}" aria-expanded="false">Hidden: {{ fic.title }} <span class="caret"></span></a>
+</div>
+<div class="collapse{{ ' in' if g.user.is_authenticated() and not g.user.is_hidden(fic) else ''}}" id="hidden_{{ fic.id }}"> 
+	{% include "fic.html" %}
+</div>

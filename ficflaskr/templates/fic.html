@@ -7,10 +7,17 @@
 	      });
 	      return false;
 	    });
+	    // TODO : move this to js file for show_fics page and convert so it doesn't use all these id's
 	    $('a#hide_{{ fic.id }}').bind('click', function() {
 	    	$.getJSON($SCRIPT_ROOT + '/_hide', {fic_id: "{{ fic.id }}"}, function(data) {
-	    		console.log(data.result);
-	    		$("#hide_button_{{ fic.id }}").toggleClass('active').attr('aria-pressed', 'true').blur()
+	    		console.log(data, data['hidden']);
+	    		$("#hide_button_{{ fic.id }}").toggleClass('active').attr('aria-pressed', 'true').blur();
+	    		if (data['hidden']) { // was hidden
+	    			$("#hidden_{{ fic.id }}").toggleClass('in');
+	    			$("#{{ fic.id }}_control").css("display", "block");
+	    		} else { // was un-hidden
+	    			$("#{{ fic.id }}_control").css("display", "none");
+	    		}
 	    	});
 	    	return false;
 	    });
